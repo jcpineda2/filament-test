@@ -3,30 +3,30 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
-use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\City;
 use App\Models\State;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
-use Filament\Forms\FormsComponent;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
 
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
+    protected static ?string $navigationGroup = 'Empleados';
+
+    protected static ?int $navigationSort = 2;
+
     protected static ?string $navigationLabel = 'Usuarios';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-s-user-group';
 
     public static function form(Form $form): Form
     {
@@ -44,9 +44,10 @@ class UserResource extends Resource
                             ->maxLength(255),
                         Forms\Components\TextInput::make('password')
                             ->password()
+                            ->hidden('edit')
                             ->required()
                             ->maxLength(255),
-                ]),
+                    ]),
                 Section::make('Address Information')
                     ->columns(3)
                     ->schema([
@@ -55,10 +56,10 @@ class UserResource extends Resource
                             ->searchable()
                             ->preload()
                             ->live()
-                            ->afterStateUpdated(function(Set $set) {
+                            ->afterStateUpdated(function (Set $set) {
                                 $set('state_id', null);
                                 $set('city_id', null);
-                            } )
+                            })
                             ->required(),
                         Forms\Components\Select::make('state_id')
                             ->options(fn (Get $get): Collection => State::query()
@@ -67,9 +68,9 @@ class UserResource extends Resource
                             ->searchable()
                             ->preload()
                             ->live()
-                            ->afterStateUpdated(function(Set $set) {
+                            ->afterStateUpdated(function (Set $set) {
                                 $set('city_id', null);
-                            } )
+                            })
                             ->required(),
                         Forms\Components\Select::make('city_id')
                             ->options(fn (Get $get): Collection => City::query()
@@ -79,8 +80,10 @@ class UserResource extends Resource
                             ->preload()
                             ->live()
                             ->required(),
+                        Forms\Components\TextInput::make('address')
+                            ->required(),
 
-                ]),
+                    ]),
 
             ]);
     }
@@ -90,9 +93,11 @@ class UserResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('email')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

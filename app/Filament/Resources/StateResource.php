@@ -2,23 +2,23 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\CityResource\Pages;
-use App\Models\City;
+use App\Filament\Resources\StateResource\Pages;
+use App\Models\State;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class CityResource extends Resource
+class StateResource extends Resource
 {
-    protected static ?string $model = City::class;
-
-    protected static ?string $navigationLabel = 'Ciudades';
+    protected static ?string $model = State::class;
 
     protected static ?string $navigationGroup = 'Configuraciones';
 
-    protected static ?int $navigationSort = 5;
+    protected static ?string $navigationLabel = 'Estados';
+
+    protected static ?int $navigationSort = 4;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -28,9 +28,6 @@ class CityResource extends Resource
             ->schema([
                 Forms\Components\Select::make('country_id')
                     ->relationship('country', 'name')
-                    ->required(),
-                Forms\Components\Select::make('state_id')
-                    ->relationship('state', 'name')
                     ->required(),
                 Forms\Components\TextInput::make('name')
                     ->required()
@@ -51,9 +48,6 @@ class CityResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('country.name')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('state.name')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('name')
@@ -102,9 +96,9 @@ class CityResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListCities::route('/'),
-            'create' => Pages\CreateCity::route('/create'),
-            'edit' => Pages\EditCity::route('/{record}/edit'),
+            'index' => Pages\ListStates::route('/'),
+            'create' => Pages\CreateState::route('/create'),
+            'edit' => Pages\EditState::route('/{record}/edit'),
         ];
     }
 }
